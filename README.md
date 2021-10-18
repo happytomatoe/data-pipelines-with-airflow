@@ -5,3 +5,8 @@ A music streaming company, Sparkify, has decided that it is time to introduce mo
 
 The source data resides in S3 and needs to be processed in Sparkify's data warehouse in Amazon Redshift. The source datasets consist of JSON logs that tell about user activity in the application and JSON metadata about the songs the users listen to.
 
+
+
+
+#Honorable mentions
+Docker compose file from https://github.com/xnuinside/airflow_in_docker_compose

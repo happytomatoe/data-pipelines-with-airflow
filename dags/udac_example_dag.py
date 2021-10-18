@@ -3,24 +3,34 @@ import os
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators import (StageToRedshiftOperator, LoadFactOperator,
-                                LoadDimensionOperator, DataQualityOperator)
+                               LoadDimensionOperator, DataQualityOperator,
+                               PostgresOperator)
 from helpers import SqlQueries
-
-# AWS_KEY = os.environ.get('AWS_KEY')
-# AWS_SECRET = os.environ.get('AWS_SECRET')
+from airflow.models import Variable
 
 default_args = {
     'owner': 'udacity',
     'start_date': datetime(2019, 1, 12),
 }
 
+# Copied from https://stackoverflow.com/questions/42982986/external-files-in-airflow-dag/46091929#46091929
+tmpl_search_path = Variable.get("sql_path")
+
 dag = DAG('udac_example_dag',
           default_args=default_args,
           description='Load and transform data in Redshift with Airflow',
-          schedule_interval='0 * * * *'
-        )
+          #           schedule_interval='0 * * * *',
+          template_searchpath=tmpl_search_path,
+          )
 
 start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
+
+create_tables = PostgresOperator(
+    task_id="create_tables",
+    dag=dag,
+    postgres_conn_id="redshift",
+    sql="create_tables.sql"
+)
 
 stage_events_to_redshift = StageToRedshiftOperator(
     task_id='Stage_events',
@@ -63,3 +73,10 @@ run_quality_checks = DataQualityOperator(
 )
 
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
+
+start_operator >> create_tables
+#     [stage_songs_to_redshift]
+# ,stage_events_to_redshift
+# >> load_songplays_table \
+# >>[load_user_dimension_table,load_song_dimension_table,load_artist_dimension_table,load_time_dimension_table] \
+# >> run_quality_checks >> end_operator
