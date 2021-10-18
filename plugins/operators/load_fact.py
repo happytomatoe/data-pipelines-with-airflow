@@ -18,7 +18,6 @@ class LoadFactOperator(BaseOperator):
 
     def execute(self, context):
         redshift_hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
-        self.log.info(dedent(f"Executing {SqlQueries.songplay_table_insert}"))
 
         redshift_hook.run(SqlQueries.songplay_table_insert, True)
         for output in redshift_hook.conn.notices:

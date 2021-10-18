@@ -9,7 +9,7 @@ from airflow.operators.postgres_operator import PostgresOperator
 S3_BUCKET = "udacity-dend"
 
 LOG_DATA_S3_KEY = "log_data"
-SONG_DATA_S3_KEY = "song_data/A/A/C"
+SONG_DATA_S3_KEY = "song_data/A/A"
 
 default_args = {
     'owner': 'udacity',
