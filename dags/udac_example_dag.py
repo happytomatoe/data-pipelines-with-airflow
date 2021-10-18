@@ -107,7 +107,7 @@ stage_songs_to_redshift = StageToRedshiftOperator(
 
 end_operator = DummyOperator(task_id='Stop_execution', dag=dag)
 
-start_operator >> stage_events_to_redshift >> end_operator
+start_operator >> create_tables >> [stage_events_to_redshift, stage_songs_to_redshift] >> end_operator
 #     [stage_songs_to_redshift]
 # ,stage_events_to_redshift
 # >> load_songplays_table \
