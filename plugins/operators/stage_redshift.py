@@ -30,9 +30,9 @@ class StageToRedshiftOperator(BaseOperator):
         self.table = kwargs['table']
         self.copy_options = kwargs['copy_options']
 
-        self.hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
-
     def execute(self, context):
+        redshift_hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
+
         aws_connection = BaseHook.get_connection(self.aws_conn_id)
         logging.info(f"Aws aws_connection login {aws_connection.login}")
         copy_query = COPY_QUERY_TEMPLATE.format(schema=self.schema,
@@ -42,10 +42,9 @@ class StageToRedshiftOperator(BaseOperator):
                                                 access_key=aws_connection.login,
                                                 secret_key=aws_connection.password,
                                                 copy_options=self.copy_options)
-        self.log.info(f"Executing {copy_query}")
 
-        self.hook.run(copy_query, True)
-        for output in self.hook.conn.notices:
+        redshift_hook.run(copy_query, True)
+        for output in redshift_hook.conn.notices:
             self.log.info(output)
 
         self.log.info('Finished')
