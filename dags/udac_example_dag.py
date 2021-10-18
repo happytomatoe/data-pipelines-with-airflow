@@ -1,12 +1,11 @@
 from datetime import datetime, timedelta
-import os
+
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
-from airflow.operators import (StageToRedshiftOperator, LoadFactOperator,
-                               LoadDimensionOperator, DataQualityOperator,
-                               PostgresOperator)
-from helpers import SqlQueries
-from airflow.models import Variable
+# from airflow.operators import (StageToRedshiftOperator, LoadFactOperator,
+#                                LoadDimensionOperator, DataQualityOperator,
+#                                PostgresOperator)
+from airflow.operators.postgres_operator import PostgresOperator
 
 default_args = {
     'owner': 'udacity',
@@ -20,9 +19,10 @@ dag = DAG('udac_example_dag',
           default_args=default_args,
           description='Load and transform data in Redshift with Airflow',
           #           schedule_interval='0 * * * *',
+          catchup=False,
           )
 
-start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
+start_operator = DummyOperator(task_id='Begin_execution', dag=dag)
 
 create_tables = PostgresOperator(
     task_id="create_tables",
@@ -71,7 +71,7 @@ create_tables = PostgresOperator(
 #     dag=dag
 # )
 
-end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
+end_operator = DummyOperator(task_id='Stop_execution', dag=dag)
 
 start_operator >> create_tables >> end_operator
 #     [stage_songs_to_redshift]
