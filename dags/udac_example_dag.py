@@ -14,13 +14,12 @@ default_args = {
 }
 
 # Copied from https://stackoverflow.com/questions/42982986/external-files-in-airflow-dag/46091929#46091929
-tmpl_search_path = Variable.get("sql_path")
+# tmpl_search_path = Variable.get("sql_path")
 
 dag = DAG('udac_example_dag',
           default_args=default_args,
           description='Load and transform data in Redshift with Airflow',
           #           schedule_interval='0 * * * *',
-          template_searchpath=tmpl_search_path,
           )
 
 start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
@@ -29,52 +28,52 @@ create_tables = PostgresOperator(
     task_id="create_tables",
     dag=dag,
     postgres_conn_id="redshift",
-    sql="create_tables.sql"
+    sql="sql/create_tables.sql"
 )
 
-stage_events_to_redshift = StageToRedshiftOperator(
-    task_id='Stage_events',
-    dag=dag
-)
-
-stage_songs_to_redshift = StageToRedshiftOperator(
-    task_id='Stage_songs',
-    dag=dag
-)
-
-load_songplays_table = LoadFactOperator(
-    task_id='Load_songplays_fact_table',
-    dag=dag
-)
-
-load_user_dimension_table = LoadDimensionOperator(
-    task_id='Load_user_dim_table',
-    dag=dag
-)
-
-load_song_dimension_table = LoadDimensionOperator(
-    task_id='Load_song_dim_table',
-    dag=dag
-)
-
-load_artist_dimension_table = LoadDimensionOperator(
-    task_id='Load_artist_dim_table',
-    dag=dag
-)
-
-load_time_dimension_table = LoadDimensionOperator(
-    task_id='Load_time_dim_table',
-    dag=dag
-)
-
-run_quality_checks = DataQualityOperator(
-    task_id='Run_data_quality_checks',
-    dag=dag
-)
+# stage_events_to_redshift = StageToRedshiftOperator(
+#     task_id='Stage_events',
+#     dag=dag
+# )
+#
+# stage_songs_to_redshift = StageToRedshiftOperator(
+#     task_id='Stage_songs',
+#     dag=dag
+# )
+#
+# load_songplays_table = LoadFactOperator(
+#     task_id='Load_songplays_fact_table',
+#     dag=dag
+# )
+#
+# load_user_dimension_table = LoadDimensionOperator(
+#     task_id='Load_user_dim_table',
+#     dag=dag
+# )
+#
+# load_song_dimension_table = LoadDimensionOperator(
+#     task_id='Load_song_dim_table',
+#     dag=dag
+# )
+#
+# load_artist_dimension_table = LoadDimensionOperator(
+#     task_id='Load_artist_dim_table',
+#     dag=dag
+# )
+#
+# load_time_dimension_table = LoadDimensionOperator(
+#     task_id='Load_time_dim_table',
+#     dag=dag
+# )
+#
+# run_quality_checks = DataQualityOperator(
+#     task_id='Run_data_quality_checks',
+#     dag=dag
+# )
 
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
 
-start_operator >> create_tables
+start_operator >> create_tables >> end_operator
 #     [stage_songs_to_redshift]
 # ,stage_events_to_redshift
 # >> load_songplays_table \
