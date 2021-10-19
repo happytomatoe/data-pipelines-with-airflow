@@ -13,7 +13,8 @@ COPY_QUERY_TEMPLATE = dedent("""
             {copy_options}
         """)
 
-
+#TODO: The parameters should be used to distinguish between JSON file. Another important
+# requirement of the stage operator is containing a templated field that allows it to load timestamped files from S3 based on the execution time and run backfills.
 class StageToRedshiftOperator(BaseOperator):
     ui_color = '#358140'
 
@@ -28,6 +29,8 @@ class StageToRedshiftOperator(BaseOperator):
         self.schema = schema
         self.table = table
         self.copy_options = copy_options
+
+    #TODO: {{ execution_date }}
 
     def execute(self, context):
         redshift_hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
