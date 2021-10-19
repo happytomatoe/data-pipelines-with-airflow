@@ -103,6 +103,7 @@ with DAG('udac_example_dag',
         mode="delete-load",
         dag=dag
     )
+
     run_quality_checks = DataQualityOperator(
         task_id='Run_data_quality_checks',
         redshift_conn_id=REDSHIFT_CONN_ID,
