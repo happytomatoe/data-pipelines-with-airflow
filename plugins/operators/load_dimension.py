@@ -32,12 +32,14 @@ class LoadDimensionOperator(BaseOperator):
             raise ValueError(
                 f"Cannot find dimension '{self.dimension}'. Available values - "
                 f"{', '.join(self.dimensions.keys())}")
+
         redshift_hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
         sql = self.dimensions[self.dimension]
-        self.log.info(dedent(f"Executing {sql}"))
 
         if self.mode == 'delete-load':
-            redshift_hook.run(f"TRUNCATE TABLE {self.dimension}", True)
+            redshift_hook.run(f"TRUNCATE TABLE {self.dimension}", False)
+            for output in redshift_hook.conn.notices:
+                self.log.info(output)
 
         redshift_hook.run(sql, True)
         for output in redshift_hook.conn.notices:
