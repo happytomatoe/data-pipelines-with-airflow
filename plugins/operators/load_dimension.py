@@ -8,25 +8,29 @@ from helpers import SqlQueries
 
 
 class LoadDimensionOperator(BaseOperator):
+    modes = ['append', 'delete-load']
     ui_color = '#80BD9E'
+    dimensions = {
+        "users": SqlQueries.user_table_insert.format("users"),
+        "time": SqlQueries.time_table_insert.format("time"),
+        "artists": SqlQueries.artist_table_insert.format("artists"),
+        "songs": SqlQueries.song_table_insert.format("songs"),
+    }
 
     @apply_defaults
-    def __init__(self,
-                 *args, **kwargs):
+    def __init__(self, dimension, redshift_conn_id, mode, *args, **kwargs):
         super(LoadDimensionOperator, self).__init__(*args, **kwargs)
-        self.dimensions = {
-            "users": SqlQueries.user_table_insert,
-            "time": SqlQueries.time_table_insert,
-            "artists": SqlQueries.artist_table_insert,
-            "songs": SqlQueries.song_table_insert,
-        }
-        self.dimension = kwargs['dimension_name']
-        self.redshift_conn_id = kwargs['redshift_conn_id']
+        self.dimension = dimension
+        self.redshift_conn_id = redshift_conn_id
+        self.mode = mode
 
     def execute(self, context):
+        if self.mode not in self.modes:
+            raise ValueError(
+                f"Cannot mode '{self.modes}'. Available values - {', '.join(self.modes)}")
         if self.dimension not in self.dimensions:
             raise ValueError(
-                f"Cannot find dimension '{self.dimension}' with such name. Available values - "
+                f"Cannot find dimension '{self.dimension}'. Available values - "
                 f"{', '.join(self.dimensions.keys())}")
         redshift_hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
         sql = self.dimensions[self.dimension]

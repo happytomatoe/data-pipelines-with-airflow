@@ -7,19 +7,16 @@ class DataQualityOperator(BaseOperator):
     ui_color = '#89DA59'
 
     @apply_defaults
-    def __init__(self,
-                 *args, **kwargs):
+    def __init__(self, redshift_conn_id, tables, *args, **kwargs):
         super(DataQualityOperator, self).__init__(*args, **kwargs)
-        self.redshift_conn_id = kwargs['redshift_conn_id']
+        self.redshift_conn_id = redshift_conn_id
+        self.tables = tables
 
     def execute(self, context):
-        self.check_greater_than_zero("users")
-        self.check_greater_than_zero("artists")
-        self.check_greater_than_zero("time")
-        self.check_greater_than_zero("songplays")
-        self.check_greater_than_zero("songs")
+        for table in self.tables:
+            self.check_number_of_records_greater_than_zero(table)
 
-    def check_greater_than_zero(self, table):
+    def check_number_of_records_greater_than_zero(self, table):
         redshift_hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
         records = redshift_hook.get_records(f"SELECT COUNT(*) FROM {table}")
         if len(records) < 1 or len(records[0]) < 1:
@@ -28,4 +25,3 @@ class DataQualityOperator(BaseOperator):
         if num_records < 1:
             raise ValueError(f"Data quality check failed. {table} table is empty")
         self.log.info(f"Data quality on table {table} check passed with {records[0][0]} records")
-    # TODO: add check if tables contain duplicates
