@@ -27,7 +27,7 @@ class LoadDimensionOperator(BaseOperator):
     def execute(self, context):
         if self.mode not in self.modes:
             raise ValueError(
-                f"Cannot mode '{self.modes}'. Available values - {', '.join(self.modes)}")
+                f"Cannot find mode '{self.modes}'. Available values - {', '.join(self.modes)}")
         if self.dimension not in self.dimensions:
             raise ValueError(
                 f"Cannot find dimension '{self.dimension}'. Available values - "
