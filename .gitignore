@@ -179,4 +179,7 @@ modules.xml
 
 .env
 event_datafile_new.csv
+# Airflow files
 logs
+files
+database
