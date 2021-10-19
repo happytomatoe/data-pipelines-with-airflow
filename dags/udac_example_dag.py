@@ -110,7 +110,6 @@ with DAG('udac_example_dag',
         mode="append",
         dag=dag
     )
-    #
     run_quality_checks = DataQualityOperator(
         task_id='Run_data_quality_checks',
         redshift_conn_id=REDSHIFT_CONN_ID,
@@ -130,7 +129,7 @@ with DAG('udac_example_dag',
 
     end_operator = DummyOperator(task_id='Stop_execution', dag=dag)
 
-    start_operator >> create_tables \
+    start_operator >> drop_tables >> create_tables \
     >> [stage_events_to_redshift, stage_songs_to_redshift] >> load_songplays_table \
     >> [load_user_dimension_table, load_song_dimension_table, load_artist_dimension_table,
         load_time_dimension_table] >> run_quality_checks >> end_operator
