@@ -6,7 +6,6 @@ from airflow.models import Variable
 from airflow.operators import (StageToRedshiftOperator, LoadFactOperator, LoadDimensionOperator,
                                DataQualityOperator)
 from airflow.operators.dummy_operator import DummyOperator
-from airflow.operators.postgres_operator import PostgresOperator
 
 REDSHIFT_CONN_ID = Variable.get("redshift_conn_id", "redshift")
 S3_BUCKET = Variable.get("s3_bucket", "udacity-dend")
