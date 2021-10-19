@@ -36,6 +36,9 @@ class LoadDimensionOperator(BaseOperator):
         sql = self.dimensions[self.dimension]
         self.log.info(dedent(f"Executing {sql}"))
 
+        if self.mode == 'delete-load':
+            redshift_hook.run(f"TRUNCATE TABLE {self.dimension}", True)
+
         redshift_hook.run(sql, True)
         for output in redshift_hook.conn.notices:
             self.log.info(output)
