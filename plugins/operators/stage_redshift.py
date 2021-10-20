@@ -13,7 +13,7 @@ class StageToRedshiftOperator(BaseOperator):
         :type redshift_conn_id: str
         :param aws_key - aws key used to access objects in s3
         :type aws_conn_id: str
-        :param aws_secret_key - aws secret used to access objects in s3
+        :param aws_secret_key - aws secret key used to access objects in s3
         :type aws_secret_key: str
         :param s3_bucket: s3 bucket
         :type s3_bucket: str
