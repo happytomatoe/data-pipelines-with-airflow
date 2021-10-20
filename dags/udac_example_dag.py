@@ -7,7 +7,7 @@ from airflow.operators import (StageToRedshiftOperator, LoadFactOperator, LoadDi
                                DataQualityOperator)
 from airflow.operators.dummy_operator import DummyOperator
 
-from operators.data_quality import TestCase
+from helpers import TestCase
 
 DIMESIONS_LOAD_MODE = "delete-load"
 
