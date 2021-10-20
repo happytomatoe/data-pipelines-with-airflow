@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timedelta
 from textwrap import dedent
 
@@ -10,11 +11,13 @@ from airflow.operators.dummy_operator import DummyOperator
 from helpers import TestCase
 
 DIMESIONS_LOAD_MODE = "delete-load"
-
 REDSHIFT_CONN_ID = Variable.get("redshift_conn_id", "redshift")
 S3_BUCKET = Variable.get("s3_bucket", "udacity-dend")
 LOG_DATA_S3_KEY = Variable.get("log_data_s3_key", "log_data/")
 SONG_DATA_S3_KEY = Variable.get("song_data_s3_key", "song_data/A/A/C")
+
+AWS_KEY = Variable.get("AWS_KEY", os.environ.get('AWS_KEY'))
+AWS_SECRET = Variable.get("AWS_SECRET", os.environ.get('AWS_SECRET'))
 
 default_args = {
     'owner': 'udacity',
@@ -40,7 +43,8 @@ with DAG('udac_example_dag',
         schema="public",
         table="staging_events",
         redshift_conn_id=REDSHIFT_CONN_ID,
-        aws_conn_id="aws_credentials",
+        aws_key=AWS_KEY,
+        aws_secret_key=AWS_SECRET,
         copy_options=dedent("""
         COMPUPDATE OFF STATUPDATE OFF
         FORMAT AS JSON 'auto ignorecase'
@@ -58,7 +62,8 @@ with DAG('udac_example_dag',
         schema="public",
         table="staging_songs",
         redshift_conn_id=REDSHIFT_CONN_ID,
-        aws_conn_id="aws_credentials",
+        aws_key=AWS_KEY,
+        aws_secret_key=AWS_SECRET,
         copy_options=dedent("""
         COMPUPDATE OFF STATUPDATE OFF
         FORMAT AS JSON 'auto'
