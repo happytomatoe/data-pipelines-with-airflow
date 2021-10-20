@@ -13,3 +13,4 @@ The source data resides in S3 and needs to be processed in Sparkify's data wareh
 # Honorable mentions
 - [Airflow documentation](http://airflow.apache.org/docs/apache-airflow/1.10.1/index.html)
 - [Redshift copy command documentation](https://docs.aws.amazon.com/redshift/latest/dg/t_loading-tables-from-s3.html)
+- Adapted docker-compose from Docker compose file from https://github.com/xnuinside/airflow_in_docker_compose
