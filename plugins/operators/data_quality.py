@@ -7,8 +7,8 @@ from helpers import TestCase
 
 class DataQualityOperator(BaseOperator):
     """
-        Runs test cases (see :class: `~helpers.TestCase` ) and matches expected and
-        actual value
+        Runs test cases (see :class: `~helpers.TestCase` ) and raises error if  expected and
+        actual value doesn't match
         :param redshift_conn_id: redshift connection id
         :type redshift_conn_id: str
         :param test_cases: test cases
