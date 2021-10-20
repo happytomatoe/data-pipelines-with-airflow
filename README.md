@@ -6,11 +6,9 @@ The source data resides in S3 and needs to be processed in Sparkify's data wareh
 
 
 # How to run the dag
-- Setup connections in airflow 
-  - aws_credentials connection. Choose connection type - Amazon Web service 
-    Set the login to access_key and password to access_secret_key 
-  - redshift connection. Choose connection type - Postgres and fill out all the needed details
-- Trigger dag
+- Create redshift connections in airflow. Choose connection type - Postgres and fill out all the needed details 
+- Set AWS_KEY, AWS_SECRET is airflow variables or set the environment variables with same names
+- Execute create_tables.sql to populate tables in redshift
 
 # Honorable mentions
 Docker compose file from https://github.com/xnuinside/airflow_in_docker_compose
