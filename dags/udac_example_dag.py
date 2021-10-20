@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from textwrap import dedent
 
 from airflow import DAG
@@ -6,6 +6,10 @@ from airflow.models import Variable
 from airflow.operators import (StageToRedshiftOperator, LoadFactOperator, LoadDimensionOperator,
                                DataQualityOperator)
 from airflow.operators.dummy_operator import DummyOperator
+
+from operators.data_quality import TestCase
+
+INGEST_MODE = "delete-load"
 
 REDSHIFT_CONN_ID = Variable.get("redshift_conn_id", "redshift")
 S3_BUCKET = Variable.get("s3_bucket", "udacity-dend")
@@ -16,8 +20,8 @@ default_args = {
     'owner': 'udacity',
     'depends_on_past': False,
     'start_date': datetime(2019, 1, 12),
-    'retries': 3,
-    'retry_delay': timedelta(minutes=5),
+    # 'retries': 3,
+    # 'retry_delay': timedelta(minutes=5),
     'email_on_retry': False,
 }
 
@@ -75,7 +79,7 @@ with DAG('udac_example_dag',
         task_id='Load_user_dim_table',
         dimension="users",
         redshift_conn_id=REDSHIFT_CONN_ID,
-        mode="delete-load",
+        mode=INGEST_MODE,
         dag=dag
     )
 
@@ -83,7 +87,7 @@ with DAG('udac_example_dag',
         task_id='Load_song_dim_table',
         dimension="songs",
         redshift_conn_id=REDSHIFT_CONN_ID,
-        mode="delete-load",
+        mode=INGEST_MODE,
         dag=dag
     )
 
@@ -91,7 +95,7 @@ with DAG('udac_example_dag',
         task_id='Load_artist_dim_table',
         dimension="artists",
         redshift_conn_id=REDSHIFT_CONN_ID,
-        mode="delete-load",
+        mode=INGEST_MODE,
         dag=dag
     )
 
@@ -99,14 +103,16 @@ with DAG('udac_example_dag',
         task_id='Load_time_dim_table',
         dimension="time",
         redshift_conn_id=REDSHIFT_CONN_ID,
-        mode="delete-load",
+        mode=INGEST_MODE,
         dag=dag
     )
 
     run_quality_checks = DataQualityOperator(
         task_id='Run_data_quality_checks',
         redshift_conn_id=REDSHIFT_CONN_ID,
-        tables=['users', 'artists', 'songs', 'time', 'songplays'],
+        test_cases=[TestCase(
+            "SELECT SUM(CASE WHEN users.first_name IS NULL THEN 1 ELSE 0 END)  FROM users", 0
+        )],
         dag=dag
     )
 

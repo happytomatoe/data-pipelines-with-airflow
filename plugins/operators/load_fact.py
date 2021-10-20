@@ -9,7 +9,7 @@ class LoadFactOperator(BaseOperator):
     ui_color = '#F98866'
 
     @apply_defaults
-    def __init__(self, redshift_conn_id, *args, **kwargs):
+    def __init__(self, redshift_conn_id: str, *args, **kwargs):
         super(LoadFactOperator, self).__init__(*args, **kwargs)
         self.redshift_conn_id = redshift_conn_id
 
@@ -19,5 +19,3 @@ class LoadFactOperator(BaseOperator):
         redshift_hook.run(SqlQueries.songplay_table_insert, True)
         for output in redshift_hook.conn.notices:
             self.log.info(output)
-
-        self.log.info('Finished')

@@ -1,5 +1,3 @@
-from textwrap import dedent
-
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
@@ -18,7 +16,7 @@ class LoadDimensionOperator(BaseOperator):
     }
 
     @apply_defaults
-    def __init__(self, dimension, redshift_conn_id, mode, *args, **kwargs):
+    def __init__(self, dimension: str, redshift_conn_id: str, mode: str, *args, **kwargs):
         super(LoadDimensionOperator, self).__init__(*args, **kwargs)
         self.dimension = dimension
         self.redshift_conn_id = redshift_conn_id
