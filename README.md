@@ -8,5 +8,5 @@ The source data resides in S3 and needs to be processed in Sparkify's data wareh
 
 
 
-#Honorable mentions
+# Honorable mentions
 Docker compose file from https://github.com/xnuinside/airflow_in_docker_compose
