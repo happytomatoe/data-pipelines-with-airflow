@@ -6,7 +6,20 @@ from helpers import SqlQueries
 
 
 class LoadDimensionOperator(BaseOperator):
-    modes = ['append', 'delete-load']
+    """
+        Loads/inserts records into dimension table
+
+        :param table: dimension table name
+        :type table: str
+
+        :param redshift_conn_id: redshift connection id
+        :type redshift_conn_id: str
+
+        :param load_mode: loading mode. Available value - 'append', 'delete-load'
+        :type load_mode: str
+    """
+
+    load_modes = ['append', 'delete-load']
     ui_color = '#80BD9E'
     dimensions = {
         "users": SqlQueries.user_table_insert.format("users"),
@@ -16,26 +29,26 @@ class LoadDimensionOperator(BaseOperator):
     }
 
     @apply_defaults
-    def __init__(self, dimension: str, redshift_conn_id: str, mode: str, *args, **kwargs):
+    def __init__(self, table: str, redshift_conn_id: str, load_mode: str, *args, **kwargs):
         super(LoadDimensionOperator, self).__init__(*args, **kwargs)
-        self.dimension = dimension
+        self.table = table
         self.redshift_conn_id = redshift_conn_id
-        self.mode = mode
+        self.load_mode = load_mode
 
     def execute(self, context):
-        if self.mode not in self.modes:
+        if self.load_mode not in self.load_modes:
             raise ValueError(
-                f"Cannot find mode '{self.modes}'. Available values - {', '.join(self.modes)}")
-        if self.dimension not in self.dimensions:
+                f"Cannot find mode '{self.load_modes}'. Available values - {', '.join(self.load_modes)}")
+        if self.table not in self.dimensions:
             raise ValueError(
-                f"Cannot find dimension '{self.dimension}'. Available values - "
+                f"Cannot find dimension '{self.table}'. Available values - "
                 f"{', '.join(self.dimensions.keys())}")
 
         redshift_hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
-        sql = self.dimensions[self.dimension]
+        sql = self.dimensions[self.table]
 
-        if self.mode == 'delete-load':
-            redshift_hook.run(f"TRUNCATE TABLE {self.dimension}", False)
+        if self.load_mode == 'delete-load':
+            redshift_hook.run(f"TRUNCATE TABLE {self.table}", False)
             for output in redshift_hook.conn.notices:
                 self.log.info(output)
 

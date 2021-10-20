@@ -6,6 +6,11 @@ from helpers.sql_queries import SqlQueries
 
 
 class LoadFactOperator(BaseOperator):
+    """
+    Loads/inserts records into fact table
+    :param redshift_conn_id: redshift connection id
+    :type redshift_conn_id: str
+    """
     ui_color = '#F98866'
 
     @apply_defaults

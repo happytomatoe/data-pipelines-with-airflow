@@ -8,11 +8,27 @@ from airflow.utils.decorators import apply_defaults
 
 @dataclass
 class TestCase:
+    """
+        Class that represents test case
+        :param sql: sql query
+        :type: sql: str
+        :param: expected_value: expected value that query should return
+        :type expected_value: `typing.Any`
+    """
     sql: str
     expected_value: 'typing.Any'
 
 
 class DataQualityOperator(BaseOperator):
+    """
+        Runs test cases (see :class: `~operators.data_quality.TestCase` ) and matches expected and
+        actual value
+        :param redshift_conn_id: redshift connection id
+        :type redshift_conn_id: str
+        :param test_cases: test cases
+        :type test_cases: [TestCase]
+        :raises valueError: if expected value doesn't match actual value
+    """
     ui_color = '#89DA59'
 
     @apply_defaults
@@ -27,7 +43,8 @@ class DataQualityOperator(BaseOperator):
 
     def test(self, sql: str, expected_value):
         redshift_hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
-        records = redshift_hook.get_records(sql)
+        # TODO: test
+        records = redshift_hook.get_first(sql)
         if len(records) < 1 or len(records[0]) < 1:
             raise ValueError(
                 f"Data quality check failed. Query returned no results. Query '{sql}'")

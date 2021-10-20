@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from textwrap import dedent
 
 from airflow import DAG
@@ -13,15 +13,16 @@ INGEST_MODE = "delete-load"
 
 REDSHIFT_CONN_ID = Variable.get("redshift_conn_id", "redshift")
 S3_BUCKET = Variable.get("s3_bucket", "udacity-dend")
-LOG_DATA_S3_KEY = Variable.get("log_data_s3_key", "log_data")
+LOG_DATA_S3_KEY = Variable.get("log_data_s3_key",
+                               "log_data/{{  macros.ds_format(ds,'%Y-%m-%d', '%Y/%m') }}/")
 SONG_DATA_S3_KEY = Variable.get("song_data_s3_key", "song_data/A/A/C")
 
 default_args = {
     'owner': 'udacity',
     'depends_on_past': False,
-    'start_date': datetime(2019, 1, 12),
-    # 'retries': 3,
-    # 'retry_delay': timedelta(minutes=5),
+    'start_date': datetime(2018, 11, 1),
+    'retries': 3,
+    'retry_delay': timedelta(minutes=5),
     'email_on_retry': False,
 }
 
@@ -77,33 +78,33 @@ with DAG('udac_example_dag',
 
     load_user_dimension_table = LoadDimensionOperator(
         task_id='Load_user_dim_table',
-        dimension="users",
+        table="users",
         redshift_conn_id=REDSHIFT_CONN_ID,
-        mode=INGEST_MODE,
+        load_mode=INGEST_MODE,
         dag=dag
     )
 
     load_song_dimension_table = LoadDimensionOperator(
         task_id='Load_song_dim_table',
-        dimension="songs",
+        table="songs",
         redshift_conn_id=REDSHIFT_CONN_ID,
-        mode=INGEST_MODE,
+        load_mode=INGEST_MODE,
         dag=dag
     )
 
     load_artist_dimension_table = LoadDimensionOperator(
         task_id='Load_artist_dim_table',
-        dimension="artists",
+        table="artists",
         redshift_conn_id=REDSHIFT_CONN_ID,
-        mode=INGEST_MODE,
+        load_mode=INGEST_MODE,
         dag=dag
     )
 
     load_time_dimension_table = LoadDimensionOperator(
         task_id='Load_time_dim_table',
-        dimension="time",
+        table="time",
         redshift_conn_id=REDSHIFT_CONN_ID,
-        mode=INGEST_MODE,
+        load_mode=INGEST_MODE,
         dag=dag
     )
 
