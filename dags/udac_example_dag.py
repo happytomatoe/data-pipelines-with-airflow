@@ -9,7 +9,7 @@ from airflow.operators.dummy_operator import DummyOperator
 
 from operators.data_quality import TestCase
 
-INGEST_MODE = "delete-load"
+DIMESIONS_LOAD_MODE = "delete-load"
 
 REDSHIFT_CONN_ID = Variable.get("redshift_conn_id", "redshift")
 S3_BUCKET = Variable.get("s3_bucket", "udacity-dend")
@@ -79,7 +79,7 @@ with DAG('udac_example_dag',
         task_id='Load_user_dim_table',
         table="users",
         redshift_conn_id=REDSHIFT_CONN_ID,
-        load_mode=INGEST_MODE,
+        load_mode=DIMESIONS_LOAD_MODE,
         dag=dag
     )
 
@@ -87,7 +87,7 @@ with DAG('udac_example_dag',
         task_id='Load_song_dim_table',
         table="songs",
         redshift_conn_id=REDSHIFT_CONN_ID,
-        load_mode=INGEST_MODE,
+        load_mode=DIMESIONS_LOAD_MODE,
         dag=dag
     )
 
@@ -95,7 +95,7 @@ with DAG('udac_example_dag',
         task_id='Load_artist_dim_table',
         table="artists",
         redshift_conn_id=REDSHIFT_CONN_ID,
-        load_mode=INGEST_MODE,
+        load_mode=DIMESIONS_LOAD_MODE,
         dag=dag
     )
 
@@ -103,7 +103,7 @@ with DAG('udac_example_dag',
         task_id='Load_time_dim_table',
         table="time",
         redshift_conn_id=REDSHIFT_CONN_ID,
-        load_mode=INGEST_MODE,
+        load_mode=DIMESIONS_LOAD_MODE,
         dag=dag
     )
 
