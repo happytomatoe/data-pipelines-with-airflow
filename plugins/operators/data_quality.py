@@ -2,10 +2,12 @@ from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 
+from helpers import TestCase
+
 
 class DataQualityOperator(BaseOperator):
     """
-        Runs test cases (see :class: `~operators.data_quality.TestCase` ) and matches expected and
+        Runs test cases (see :class: `~helpers.TestCase` ) and matches expected and
         actual value
         :param redshift_conn_id: redshift connection id
         :type redshift_conn_id: str

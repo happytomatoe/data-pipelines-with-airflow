@@ -18,5 +18,4 @@ class UdacityPlugin(AirflowPlugin):
     helpers = [
         helpers.SqlQueries,
         helpers.TestCase,
-
     ]

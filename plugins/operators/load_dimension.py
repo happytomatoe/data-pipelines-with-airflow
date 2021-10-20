@@ -11,10 +11,8 @@ class LoadDimensionOperator(BaseOperator):
 
         :param table: dimension table name
         :type table: str
-
         :param redshift_conn_id: redshift connection id
         :type redshift_conn_id: str
-
         :param load_mode: loading mode. Available value - 'append', 'delete-load'
         :type load_mode: str
     """
