@@ -13,9 +13,8 @@ INGEST_MODE = "delete-load"
 
 REDSHIFT_CONN_ID = Variable.get("redshift_conn_id", "redshift")
 S3_BUCKET = Variable.get("s3_bucket", "udacity-dend")
-LOG_DATA_S3_KEY = Variable.get("log_data_s3_key",
-                               "log_data/{{  macros.ds_format(ds,'%Y-%m-%d', '%Y/%m') }}/")
-SONG_DATA_S3_KEY = Variable.get("song_data_s3_key", "song_data/A/A/C")
+LOG_DATA_S3_KEY = Variable.get("log_data_s3_key", "log_data/")
+SONG_DATA_S3_KEY = Variable.get("song_data_s3_key", "song_data/")
 
 default_args = {
     'owner': 'udacity',
